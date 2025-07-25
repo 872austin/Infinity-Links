@@ -1,0 +1,146 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Infinity Links | Shop{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-6 text-center">Shop Products</h2>
+
+<!-- Cart Controls -->
+<div class="flex justify-center gap-4 mb-6">
+  <button onclick="toggleCart()" class="bg-gray-800 text-white px-5 py-2 rounded hover:bg-black transition">
+    View Cart (<span id="cart-count">0</span>)
+  </button>
+  <button onclick="sendOrder()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
+    Order Selected Products
+  </button>
+</div>
+
+<!-- Cart Sidebar -->
+<div id="cart-panel" class="fixed top-0 right-0 w-80 h-full bg-white border-l z-50 shadow-xl p-4 hidden overflow-y-auto">
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-xl font-semibold">Your Cart</h3>
+    <button onclick="toggleCart()" class="text-red-500 font-bold text-lg">&times;</button>
+  </div>
+  <ul id="cart-items" class="space-y-2 text-sm">
+    <!-- Cart items get inserted here -->
+  </ul>
+  <div class="mt-4">
+    <p class="text-sm text-gray-600">Total: <span id="cart-total">Ksh0</span></p>
+  </div>
+</div>
+
+<!-- Product Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+  {% for product in products %}
+    <div class="relative bg-white rounded-2xl shadow-sm hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200 p-2 overflow-hidden group">
+
+      <!-- Product Image + Overlay -->
+      <div class="relative w-full h-64">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover rounded-t-2xl">
+        <div class="absolute inset-0 bg-black bg-opacity-70 text-white opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center p-4 rounded-t-2xl">
+          <h2 class="text-lg font-bold mb-1">{{ product.name }}</h2>
+          <p class="text-sm font-semibold mb-1">Ksh{{ product.price }}</p>
+          <p class="text-xs text-gray-200">{{ product.description }}</p>
+        </div>
+      </div>
+
+      <!-- Product Details -->
+      <div class="p-4 w-full">
+        <h2 class="text-lg font-bold mb-1">{{ product.name }}</h2>
+        <p class="text-gray-800 text-base font-semibold mb-1">Ksh{{ product.price }}</p>
+        <p class="text-gray-500 text-sm mb-3">{{ product.description }}</p>
+
+        <!-- Quantity Selector -->
+        <div class="flex justify-center items-center mb-3">
+          <label class="text-sm mr-2">Qty:</label>
+          <input type="number" min="1" value="1" id="qty-{{ forloop.counter }}" class="w-16 text-center border rounded px-2 py-1">
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-col gap-2">
+          <button onclick="addToCart('{{ product.name }}', {{ product.price }}, getQty({{ forloop.counter }}))"
+                  class="w-full bg-gray-800 text-white py-2 rounded hover:bg-black transition">
+            Add to Cart
+          </button>
+          <button onclick="buyNow('{{ product.name }}', {{ product.price }}, getQty({{ forloop.counter }}))"
+                  class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition">
+            Buy Now
+          </button>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- JS Logic -->
+<script>
+  let cart = [];
+
+  function getQty(index) {
+    const qty = parseInt(document.getElementById("qty-" + index).value);
+    return qty > 0 ? qty : 1;
+  }
+
+  function addToCart(name, price, quantity) {
+    for (let i = 0; i < quantity; i++) {
+      cart.push({ name, price });
+    }
+    updateCartDisplay();
+    alert(`Added ${quantity} "${name}" to cart`);
+  }
+
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartDisplay();
+  }
+
+  function updateCartDisplay() {
+    const cartItems = document.getElementById("cart-items");
+    const cartCount = document.getElementById("cart-count");
+    const cartTotal = document.getElementById("cart-total");
+
+    cartItems.innerHTML = "";
+    let total = 0;
+
+    cart.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.className = "flex justify-between items-center border-b pb-1";
+      li.innerHTML = `
+        <span>${item.name} - Ksh${item.price}</span>
+        <button onclick="removeFromCart(${index})" class="text-red-500">Remove</button>
+      `;
+      cartItems.appendChild(li);
+      total += item.price;
+    });
+
+    cartCount.textContent = cart.length;
+    cartTotal.textContent = `Ksh${total}`;
+  }
+
+  function toggleCart() {
+    const panel = document.getElementById("cart-panel");
+    panel.classList.toggle("hidden");
+  }
+
+  function sendOrder() {
+    if (cart.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    const list = cart.map((item, i) => `${i + 1}. ${item.name} - Ksh${item.price}`).join('%0A');
+    const message = `Hi Infinity Links, I'd like to order:%0A%0A${list}`;
+    const phone = "254768810610";
+    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+  }
+
+  function buyNow(name, price, quantity) {
+    let message = `Hi Infinity Links, I'd like to order:%0A%0A`;
+    for (let i = 0; i < quantity; i++) {
+      message += `- ${name} - Ksh${price}%0A`;
+    }
+    window.open(`https://wa.me/254768810610?text=${message}`, "_blank");
+  }
+</script>
+{% endblock %}

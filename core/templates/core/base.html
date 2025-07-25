@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Infinity Links{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a2d3e9d6d4.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-white text-black font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow-md sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-black">Infinity Links</h1>
+
+      <nav class="space-x-6 text-sm md:text-base">
+        <a href="/" class="text-black hover:underline underline-offset-4 transition">Home</a>
+        <a href="/shop" class="text-black hover:underline underline-offset-4 transition">Shop</a>
+        <a href="/contact" class="text-black hover:underline underline-offset-4 transition">Contact</a>
+        <a href="/login" class="text-black hover:underline underline-offset-4 transition">Login</a>
+        <a href="/register" class="text-black hover:underline underline-offset-4 transition">Register</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="py-10 px-4 max-w-7xl mx-auto">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white py-10 mt-20">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div>
+        <h4 class="font-semibold text-lg mb-3">Infinity Links</h4>
+        <p class="text-sm text-gray-300">Accessories that define your style. Watches, bracelets, necklaces — all in one place.</p>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-lg mb-3">Quick Links</h4>
+        <ul class="text-sm space-y-2">
+          <li><a href="/" class="hover:underline">Home</a></li>
+          <li><a href="/shop" class="hover:underline">Shop</a></li>
+          <li><a href="/contact" class="hover:underline">Contact</a></li>
+          <li><a href="/login" class="hover:underline">Login</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-lg mb-3">Connect with Us</h4>
+        <div class="flex flex-col gap-2 text-sm">
+          <a href="https://instagram.com/amkenani._" target="_blank" class="hover:text-pink-400 flex items-center gap-2">
+            <i class="fab fa-instagram"></i> Instagram
+          </a>
+          <a href="https://www.tiktok.com/@amkenanike" target="_blank" class="hover:text-pink-400 flex items-center gap-2">
+            <i class="fab fa-tiktok"></i> TikTok
+          </a>
+          <a href="https://wa.me/254768810610?text=Hello%20Infinity%20Links,%20I%20would%20like%20to%20order%20a%20product." 
+             target="_blank" class="hover:text-green-400 flex items-center gap-2">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-gray-500 text-sm mt-8">
+      &copy; {{ now|date:"Y" }} Infinity Links. All rights reserved.
+    </div>
+  </footer>
+
+</body>
+</html>

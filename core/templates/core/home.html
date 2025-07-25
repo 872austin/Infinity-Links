@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Infinity Links | Home{% endblock %}
+
+{% block content %}
+<section class="bg-gray-100 py-16">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold mb-6">Explore Our New Arrivals</h2>
+    <p class="text-gray-600 mb-10">Watches, bracelets, necklaces, and more — designed for everyone.</p>
+    <a href="/shop" class="inline-block bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition">
+      Browse Shop
+    </a>
+  </div>
+</section>
+
+<section class="py-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <h3 class="text-2xl font-bold mb-8 text-center">Featured Products</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+      {% for product in featured_products %}
+        <div class="relative bg-white rounded-2xl shadow-sm hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200 p-2 overflow-hidden group">
+
+          <!-- Image with Overlay -->
+          <div class="relative w-full h-64">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover rounded-t-2xl">
+            <div class="absolute inset-0 bg-black bg-opacity-70 text-white opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center p-4 rounded-t-2xl">
+              <h4 class="text-lg font-bold mb-1">{{ product.name }}</h4>
+              <p class="text-sm font-semibold mb-1">Ksh{{ product.price }}</p>
+              <p class="text-xs text-gray-200">{{ product.description }}</p>
+            </div>
+          </div>
+
+          <!-- Static Info Below -->
+          <div class="p-4 w-full">
+            <h4 class="text-lg font-bold mb-1">{{ product.name }}</h4>
+            <p class="text-gray-800 font-semibold mb-2">Ksh{{ product.price }}</p>
+            <a href="https://wa.me/254768810610?text=Hello Infinity Links, I'd like to order {{ product.name }}" target="_blank"
+              class="inline-block bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-black transition">
+              Order Now
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
