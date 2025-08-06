@@ -1,14 +1,19 @@
 from pathlib import Path
-import os  # ← Needed for MEDIA_ROOT
+import os
+import dj_database_url
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-fzh9z=p2od)eto3dsi@v5u1@d+tybeg6^j^vb+dsmu0jscte_f'
+# Security
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fzh9z=p2od)eto3dsi@v5u1@d+tybeg6^j^vb+dsmu0jscte_f")
+DEBUG = os.getenv("DEBUG", "True") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+# Installed apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -19,8 +24,10 @@ INSTALLED_APPS = [
     'core',
 ]
 
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -31,10 +38,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'infinity_links.urls'
 
+# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],  # Custom templates folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -48,6 +56,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'infinity_links.wsgi.application'
 
+# Database (SQLite for local, Postgres for Heroku)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -55,39 +64,45 @@ DATABASES = {
     }
 }
 
+# Override with DATABASE_URL if available
+DATABASES['default'] = dj_database_url.config(
+    default=os.getenv("DATABASE_URL", ""),
+    conn_max_age=600,
+    ssl_require=True
+) or DATABASES['default']
+
+# Password validators
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# Language & timezone
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+# Static files
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ✅ Media files config (for image uploads)
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email configuration
+# Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'kenaniaustin2@gmail.com'       # Your Gmail address
-EMAIL_HOST_PASSWORD = 'ottrngmzsxjrzwgc'    # Use App Password, not your Gmail password
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "kenaniaustin2@gmail.com")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "ottrngmzsxjrzwgc")  # App password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
