@@ -10,8 +10,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-fzh9z=p2od)eto3dsi@v5u1@d+tybeg6^j^vb+dsmu0jscte_f")
-DEBUG = os.getenv("DEBUG", "True") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+
+# Auto-disable debug in Render
+DEBUG = os.getenv("DEBUG", "True") == "True" and 'RENDER' not in os.environ
+
+# Hosts
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
+    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
+if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 # Installed apps
 INSTALLED_APPS = [
@@ -56,20 +64,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'infinity_links.wsgi.application'
 
-# Database (SQLite for local, Postgres for Heroku)
+# Database: SQLite locally, Postgres on Render
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-# Override with DATABASE_URL if available
-DATABASES['default'] = dj_database_url.config(
-    default=os.getenv("DATABASE_URL", ""),
-    conn_max_age=600,
-    ssl_require=True
-) or DATABASES['default']
+if os.getenv("DATABASE_URL"):
+    DATABASES['default'] = dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
+    )
 
 # Password validators
 AUTH_PASSWORD_VALIDATORS = [
