@@ -1,48 +1,73 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}Infinity Links | Home{% endblock %}
-
 {% block content %}
-<section class="bg-gray-100 py-16">
-  <div class="max-w-7xl mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold mb-6">Explore Our New Arrivals</h2>
-    <p class="text-gray-600 mb-10">Watches, bracelets, necklaces, and more — designed for everyone.</p>
-    <a href="/shop" class="inline-block bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition">
-      Browse Shop
-    </a>
-  </div>
-</section>
+  <!-- Hero / Intro Section -->
+  <section class="bg-gray-100 dark:bg-gray-900 py-16 text-center">
+    <div class="max-w-4xl mx-auto px-6">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        Welcome to Infinity Links
+      </h1>
+      <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+        Discover timeless watches, bracelets, and necklaces crafted to perfection. Elevate your style today.
+      </p>
+      <a href="{% url 'shop' %}" 
+         class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+        Shop Now
+      </a>
+    </div>
+  </section>
 
-<section class="py-16">
-  <div class="max-w-7xl mx-auto px-4">
-    <h3 class="text-2xl font-bold mb-8 text-center">Featured Products</h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-      {% for product in featured_products %}
-        <div class="relative bg-white rounded-2xl shadow-sm hover:shadow-lg transition duration-300 flex flex-col items-center text-center border border-gray-200 p-2 overflow-hidden group">
+  <!-- Featured Products Section -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">
+        Explore Our New Arrivals
+      </h2>
 
-          <!-- Image with Overlay -->
-          <div class="relative w-full h-64">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover rounded-t-2xl">
-            <div class="absolute inset-0 bg-black bg-opacity-70 text-white opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-center items-center p-4 rounded-t-2xl">
-              <h4 class="text-lg font-bold mb-1">{{ product.name }}</h4>
-              <p class="text-sm font-semibold mb-1">Ksh{{ product.price }}</p>
-              <p class="text-xs text-gray-200">{{ product.description }}</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {% for product in featured_products %}
+          <div class="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+            
+            <!-- Product Image -->
+            <div class="relative">
+              <img src="{{ product.image.url|default:'/static/images/placeholder.png' }}" 
+                   alt="{{ product.name }}" 
+                   class="w-full h-64 object-cover">
+              
+              <!-- Overlay on Hover -->
+              <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center 
+                          text-center text-white opacity-0 group-hover:opacity-100 transition duration-300 px-4">
+                <h3 class="text-lg font-semibold">{{ product.name }}</h3>
+                <p class="text-sm mb-2">{{ product.description|truncatewords:12 }}</p>
+                <span class="text-blue-400 font-bold mb-2">${{ product.price }}</span>
+                <a href="https://wa.me/254768810610?text=Hello%20Infinity%20Links,%20I%20would%20like%20to%20order%20{{ product.name }}."
+                   target="_blank"
+                   aria-label="Order {{ product.name }} on WhatsApp"
+                   class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
+                  Order Now
+                </a>
+              </div>
+            </div>
+
+            <!-- Static Product Info -->
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ product.name }}</h3>
+              <span class="block text-blue-600 dark:text-blue-400 font-bold mb-2">${{ product.price }}</span>
+              <a href="https://wa.me/254768810610?text=Hello%20Infinity%20Links,%20I%20would%20like%20to%20order%20{{ product.name }}."
+                 target="_blank"
+                 aria-label="Order {{ product.name }} on WhatsApp"
+                 class="block text-center px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
+                Order Now
+              </a>
             </div>
           </div>
-
-          <!-- Static Info Below -->
-          <div class="p-4 w-full">
-            <h4 class="text-lg font-bold mb-1">{{ product.name }}</h4>
-            <p class="text-gray-800 font-semibold mb-2">Ksh{{ product.price }}</p>
-            <a href="https://wa.me/254768810610?text=Hello Infinity Links, I'd like to order {{ product.name }}" target="_blank"
-              class="inline-block bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-black transition">
-              Order Now
-            </a>
-          </div>
-        </div>
-      {% endfor %}
+        {% empty %}
+          <p class="text-center text-gray-600 dark:text-gray-300 col-span-4">
+            No featured products available right now. Check back later!
+          </p>
+        {% endfor %}
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 {% endblock %}
